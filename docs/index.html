@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小機票 · 票價看板</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --ink:#101E33; --ink-soft:#4A5B72; --ink-faint:#7C8CA2;
+    --paper:#F2F5F8; --surface:#FFFFFF; --surface-alt:#E9EEF4;
+    --line:#D6DEE7; --line-soft:#E5EBF1;
+    --accent:#B36A05; --accent-soft:#FAF0DC; --accent-fill:rgba(179,106,5,.12);
+    --good:#17705B; --good-soft:#DDEFE9;
+    --warn:#8A6A12; --warn-soft:#F7EFD9;
+    --bad:#A2432A; --bad-soft:#F7E4DD;
+    --board-bg:#0C1626; --board-ink:#EDF1F6; --board-amber:#F0B44B; --board-line:#2A3B52;
+    --grid:rgba(16,30,51,.08);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ink:#E5EBF3; --ink-soft:#A0B0C4; --ink-faint:#74869C;
+      --paper:#0A1220; --surface:#121D2C; --surface-alt:#1A2839;
+      --line:#253549; --line-soft:#1D2B3C;
+      --accent:#EDAA3E; --accent-soft:#2A2113; --accent-fill:rgba(237,170,62,.14);
+      --good:#55C2A3; --good-soft:#122B26;
+      --warn:#D8B155; --warn-soft:#2A2314;
+      --bad:#E5866A; --bad-soft:#2E1A15;
+      --grid:rgba(229,235,243,.09);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Noto Sans TC","IBM Plex Sans",system-ui,sans-serif;font-size:16px;line-height:1.7;
+    -webkit-font-smoothing:antialiased}
+  .in{max-width:1080px;margin:0 auto;padding:0 20px}
+  button{font:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* ── header ───────────────────────────────── */
+  .board{background:var(--board-bg);color:var(--board-ink);border-bottom:3px solid var(--board-amber)}
+  .board .in{padding-top:22px;padding-bottom:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+  .eyebrow{font-family:"Barlow Semi Condensed",sans-serif;font-size:12px;font-weight:600;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--board-amber);margin:0 0 1px}
+  .board h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-.01em}
+  .stamp{font-family:"IBM Plex Mono",monospace;font-size:12px;color:#8A9CB2;margin:3px 0 0}
+  .picker{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .picker span{font-family:"Barlow Semi Condensed",sans-serif;font-size:12px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:#8A9CB2}
+  select{font:inherit;font-size:14px;background:transparent;color:var(--board-ink);
+    border:1px solid var(--board-line);border-radius:5px;padding:6px 10px;cursor:pointer}
+  select option{color:#101E33;background:#fff}
+
+  /* ── watch tabs ───────────────────────────── */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;padding:20px 0 0}
+  .tab{background:var(--surface);border:1px solid var(--line);border-radius:100px;
+    padding:7px 16px;color:var(--ink-soft);display:flex;align-items:baseline;gap:9px}
+  .tab .code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em}
+  .tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .tab.add{border-style:dashed;color:var(--accent);border-color:var(--accent)}
+
+  /* ── meta strip ───────────────────────────── */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    margin-top:16px;overflow:hidden}
+  .meta{display:flex;flex-wrap:wrap;gap:0 30px;padding:16px 22px;border-bottom:1px solid var(--line-soft)}
+  .m{display:flex;flex-direction:column;gap:0;padding:4px 0}
+  .m b{font-family:"Barlow Semi Condensed","Noto Sans TC",sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);line-height:1.6}
+  .m span{font-family:"IBM Plex Mono",monospace;font-size:14.5px;font-variant-numeric:tabular-nums;
+    line-height:1.5}
+  .m .hero{font-size:19px;font-weight:600;color:var(--good)}
+  .m.right{margin-left:auto;text-align:right}
+
+  .chart-head{display:flex;align-items:baseline;gap:12px;padding:16px 22px 0;flex-wrap:wrap}
+  .chart-head h2{margin:0;font-size:16px;font-weight:700}
+  .chart-head p{margin:0;font-size:13px;color:var(--ink-faint)}
+  .chartbox{padding:8px 14px 18px;height:290px}
+  .err{margin:0;padding:11px 22px;background:var(--bad-soft);color:var(--bad);font-size:13.5px}
+
+  /* ── selected day ─────────────────────────── */
+  .day{border-top:1px solid var(--line-soft);background:var(--surface-alt)}
+  .day-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;padding:15px 22px 0}
+  .day-head h3{margin:0;font-size:17px;font-weight:700;font-family:"IBM Plex Mono",monospace}
+  .day-head .sub{font-size:13px;color:var(--ink-soft)}
+  .day-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;padding:12px 22px 20px}
+  .flights{display:flex;flex-direction:column;gap:6px}
+  .fl{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+    background:var(--surface);border:1px solid var(--line);border-radius:7px;
+    padding:9px 13px;text-align:left;width:100%}
+  .fl:hover{border-color:var(--accent)}
+  .fl[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+  .fl .t{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .fl .who{font-size:13.5px;line-height:1.45;color:var(--ink)}
+  .fl .who em{font-style:normal;display:block;font-size:12px;color:var(--ink-faint);
+    font-family:"IBM Plex Mono",monospace}
+  .fl .p{font-family:"IBM Plex Mono",monospace;font-size:14.5px;font-weight:600;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .mini{height:190px}
+  .hint{font-size:12.5px;color:var(--ink-faint);margin:6px 0 0}
+  .empty{padding:44px 24px;text-align:center;color:var(--ink-soft)}
+
+  /* ── chips ────────────────────────────────── */
+  .chip{display:inline-block;font-family:"Barlow Semi Condensed","Noto Sans TC",sans-serif;
+    font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    padding:2px 9px;border-radius:100px}
+  .c-cheap{background:var(--good-soft);color:var(--good)}
+  .c-ok{background:var(--surface-alt);color:var(--ink-soft)}
+  .c-high{background:var(--warn-soft);color:var(--warn)}
+  .c-worst{background:var(--bad-soft);color:var(--bad)}
+  .c-new{background:var(--surface-alt);color:var(--ink-faint)}
+
+  /* ── add watch form ───────────────────────── */
+  .form{margin-top:16px;background:var(--surface);border:1px solid var(--accent);
+    border-radius:10px;padding:20px 22px 22px}
+  .form h2{margin:0 0 3px;font-size:17px}
+  .form>p{margin:0 0 16px;font-size:13.5px;color:var(--ink-soft)}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 14px}
+  .f{display:flex;flex-direction:column;gap:3px}
+  .f label{font-family:"Barlow Semi Condensed","Noto Sans TC",sans-serif;font-size:11px;
+    font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint)}
+  .f input,.f select{font:inherit;font-size:14px;padding:7px 9px;border-radius:5px;
+    border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+  .f small{font-size:11.5px;color:var(--ink-faint)}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}
+  .btn{border:1px solid var(--ink);background:var(--ink);color:var(--paper);
+    border-radius:6px;padding:8px 18px;font-size:14px;font-weight:500}
+  .btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+  .out{margin-top:14px;display:none}
+  .out.show{display:block}
+  .out pre{margin:0;background:var(--surface-alt);border:1px solid var(--line);border-radius:6px;
+    padding:12px 14px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:12.5px;
+    line-height:1.6;white-space:pre}
+  .say{font-size:13px;color:var(--good);margin:8px 0 0;min-height:20px}
+
+  footer{max-width:1080px;margin:0 auto;padding:30px 20px 60px;color:var(--ink-faint);font-size:12.5px}
+  @media (max-width:760px){
+    .day-grid{grid-template-columns:1fr}
+    .m.right{margin-left:0;text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header class="board">
+  <div class="in">
+    <div>
+      <p class="eyebrow">Flight Price Watcher</p>
+      <h1>小機票</h1>
+      <p class="stamp" id="stamp">載入中…</p>
+    </div>
+    <div class="picker">
+      <span>幣別</span>
+      <select id="cur"></select>
+    </div>
+  </div>
+</header>
+
+<main class="in">
+  <div class="tabs" id="tabs"></div>
+  <div id="panel"></div>
+  <section class="form" id="form" hidden></section>
+</main>
+
+<footer id="foot"></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="config.js"></script>
+<script>
+const VERDICT = {cheap:["最便宜","c-cheap"],ok:["合理","c-ok"],high:["偏貴","c-high"],
+                 worst:["很貴","c-worst"],new:["觀察中","c-new"]};
+const WEEK = ["日","一","二","三","四","五","六"];
+
+let DATA=null, DETAIL={}, RATE=1, SYM="Rp", ACTIVE=null, PICKED=null;
+let mainChart=null, miniChart=null;
+
+const $  = s => document.querySelector(s);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const money = v => v==null ? "—"
+  : SYM+" "+(v*RATE).toLocaleString("en-US",{maximumFractionDigits:(v*RATE)<100?2:0});
+const dayLabel = d => { const x=new Date(d+"T00:00:00");
+  return `${d.slice(5).replace("-","/")}（${WEEK[x.getDay()]}）`; };
+const hrs = m => m ? `${Math.floor(m/60)}h ${String(m%60).padStart(2,"0")}m` : "—";
+
+/* ── 追蹤項目分頁 ───────────────────────────── */
+function drawTabs(){
+  const box=$("#tabs"); box.innerHTML="";
+  DATA.watches.forEach(w=>{
+    const b=document.createElement("button");
+    b.className="tab"; b.setAttribute("aria-selected", String(w.id===ACTIVE));
+    b.innerHTML=`<span class="code">${esc(w.from)}⇄${esc(w.to)}</span>${esc(w.label)}`;
+    b.onclick=()=>{ ACTIVE=w.id; PICKED=null; drawTabs(); drawPanel(); };
+    box.appendChild(b);
+  });
+  const add=document.createElement("button");
+  add.className="tab add"; add.textContent="＋ 新增追蹤";
+  add.onclick=()=>{ const f=$("#form"); f.hidden=!f.hidden;
+    if(!f.hidden) f.scrollIntoView({behavior:"smooth",block:"nearest"}); };
+  box.appendChild(add);
+}
+
+/* ── 主面板 ─────────────────────────────────── */
+function drawPanel(){
+  const w = DATA.watches.find(x=>x.id===ACTIVE);
+  const box=$("#panel");
+  if(mainChart){mainChart.destroy(); mainChart=null;}
+  if(miniChart){miniChart.destroy(); miniChart=null;}
+
+  if(!w){ box.innerHTML='<div class="panel"><div class="empty">還沒有任何價格紀錄。第一次抓價跑完就會出現。</div></div>'; return; }
+
+  const stay = w.trip==="round-trip" ? `來回・停留 ${w.stay_days} 天` : "單程";
+  const pin  = w.pin_airline||w.pin_depart_time
+    ? `${esc(w.pin_airline||"")} ${esc(w.pin_depart_time||"")}`.trim() : "未指定（記錄當天最便宜）";
+
+  box.innerHTML = `
+    <div class="panel">
+      <div class="meta">
+        <div class="m"><b>追蹤日期區間</b><span>${w.date_from} → ${w.date_to}</span></div>
+        <div class="m"><b>行程</b><span>${stay}・${esc(w.seat)}</span></div>
+        <div class="m"><b>指定班次</b><span>${pin}</span></div>
+        <div class="m"><b>已掃描</b><span>${w.scanned} / ${w.total_days} 天</span></div>
+        <div class="m right"><b>區間最低</b><span class="hero">${money(w.best.p)}</span>
+          <b>${dayLabel(w.best.d)}・${esc(w.best.a)}</b></div>
+      </div>
+      ${w.errors ? `<p class="err">有 ${w.errors} 個日期最近一次抓取失敗：${esc(w.last_error)}</p>` : ""}
+      <div class="chart-head">
+        <h2>每天票價</h2>
+        <p>點圖上任何一天，看那天有哪些班次可以選</p>
+      </div>
+      <div class="chartbox"><canvas id="main"></canvas></div>
+    </div>
+    <div id="day"></div>`;
+
+  const pts = w.by_date.map(d=>({x:d.d, y:d.p*RATE, raw:d}));
+  if(typeof Chart==="undefined"){ drawFallback(w); if(PICKED) drawDay(); return; }
+
+  mainChart = new Chart($("#main"), {
+    type:"line",
+    data:{datasets:[{
+      data:pts, parsing:false,
+      borderColor:css("--accent"), backgroundColor:css("--accent-fill"),
+      borderWidth:2, fill:true, tension:.18,
+      pointRadius:pts.map(p=>p.raw.d===w.best.d?5:0),
+      pointHoverRadius:5,
+      pointBackgroundColor:css("--good"), pointBorderColor:css("--surface"), pointBorderWidth:2
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:false,
+      parsing:false, normalized:true,
+      interaction:{mode:"index", intersect:false},
+      onClick:(e,els)=>{ if(els.length){ PICKED = pts[els[0].index].raw.d; drawDay(); } },
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          displayColors:false, backgroundColor:css("--board-bg"), padding:10,
+          titleFont:{family:"IBM Plex Mono"}, bodyFont:{size:13},
+          callbacks:{
+            title:c=>dayLabel(c[0].raw.raw.d),
+            label:c=>{ const r=c.raw.raw;
+              return [money(r.p), `${r.a} ${r.dt}・${r.s?r.s+" 轉":"直飛"}・${hrs(r.dur)}`]; }
+          }
+        },
+        annotation:false
+      },
+      scales:{
+        x:{type:"time", time:{unit:"month", tooltipFormat:"yyyy-MM-dd"},
+           grid:{color:css("--grid")},
+           ticks:{color:css("--ink-faint"),font:{size:11},maxRotation:0}},
+        y:{grid:{color:css("--grid")},
+           ticks:{color:css("--ink-faint"),font:{size:11},
+                  callback:v=>v>=1e6?(v/1e6).toFixed(1)+"M":v>=1000?(v/1000).toFixed(0)+"k":v}}
+      }
+    }
+  });
+  if(PICKED) drawDay();
+}
+
+/* 圖表函式庫載不到時的替代：直接列出每天的價格 */
+function drawFallback(w){
+  const box=$(".chartbox");
+  box.style.height="auto";
+  box.innerHTML = '<p class="hint" style="margin:0 0 8px">圖表元件載不到，改用清單顯示。</p>' +
+    '<div style="max-height:260px;overflow:auto">' +
+    w.by_date.map(d=>{
+      const [word,cls]=VERDICT[d.v]||VERDICT.new;
+      return `<button class="fl" style="margin-bottom:4px" onclick="PICKED='${d.d}';drawDay()">
+        <span class="t">${dayLabel(d.d)}</span>
+        <span class="who">${esc(d.a)} ${esc(d.dt)}<em>${d.s?d.s+" 轉":"直飛"}・${hrs(d.dur)}</em></span>
+        <span class="p">${money(d.p)} <span class="chip ${cls}">${word}</span></span></button>`;
+    }).join("") + '</div>';
+}
+
+/* ── 選定日期：可點選的班次 + 價格變化 ────────── */
+async function drawDay(){
+  const w = DATA.watches.find(x=>x.id===ACTIVE);
+  const box=$("#day");
+  if(!w || !PICKED){ box.innerHTML=""; return; }
+  if(miniChart){miniChart.destroy(); miniChart=null;}
+
+  if(!DETAIL[w.id]){
+    box.innerHTML='<div class="panel"><div class="empty">載入班次資料…</div></div>';
+    try{ DETAIL[w.id] = await (await fetch(`detail-${w.id}.json?`+Date.now())).json(); }
+    catch(e){ DETAIL[w.id] = {}; }
+  }
+
+  const info = DETAIL[w.id] || {};
+  const opts = ((info.options||{})[PICKED]||{}).options || [];
+  const seen = ((info.options||{})[PICKED]||{}).seen || "";
+  const hist = (info.history||{})[PICKED] || [];
+  const row  = w.by_date.find(d=>d.d===PICKED);
+  const [word,cls] = VERDICT[row?.v] || VERDICT.new;
+
+  box.innerHTML = `
+    <div class="panel day">
+      <div class="day-head">
+        <h3>${PICKED}</h3>
+        <span class="chip ${cls}">${word}</span>
+        <span class="sub">${row?.r ? "回程 "+row.r+"・" : ""}${row?.why||""}${seen?"・資料時間 "+seen:""}</span>
+      </div>
+      <div class="day-grid">
+        <div>
+          <div class="flights" id="flights"></div>
+          <p class="hint">點一個班次 = 把它設成這個追蹤項目的指定班次，之後只記錄它的價格。</p>
+        </div>
+        <div>
+          <div class="chart-head" style="padding:0 0 4px"><h2>這一天的價格變化</h2></div>
+          <div class="mini"><canvas id="mini"></canvas></div>
+          ${hist.length>1 && typeof Chart!=="undefined" ? "" :
+            '<p class="hint">'+(hist.length>1?"圖表元件載不到。":"這一天只抓過一次，多跑幾輪之後就會有曲線。")+'</p>'}
+        </div>
+      </div>
+    </div>`;
+
+  const list=$("#flights");
+  if(!opts.length){
+    list.innerHTML='<p class="hint">這一天還沒有班次快照。等下一輪掃到它就會出現。</p>';
+  }
+  opts.forEach(o=>{
+    const isPin = w.pin_airline && o.airline.toLowerCase().includes(w.pin_airline.toLowerCase())
+               && (!w.pin_depart_time || w.pin_depart_time===o.depart_time);
+    const b=document.createElement("button");
+    b.className="fl"; b.type="button"; b.setAttribute("aria-pressed", String(!!isPin));
+    b.innerHTML=`<span class="t">${esc(o.depart_time)}</span>
+      <span class="who">${esc(o.airline)}
+        <em>${o.stops?o.stops+" 轉":"直飛"}・${hrs(o.duration_min)}${o.flight_no?"・"+esc(o.flight_no):""}</em></span>
+      <span class="p">${money(o.price)}</span>`;
+    b.onclick=()=>pinFlight(w,o);
+    list.appendChild(b);
+  });
+
+  if(hist.length>1 && typeof Chart!=="undefined"){
+    miniChart = new Chart($("#mini"), {
+      type:"line",
+      data:{datasets:[{
+        data:hist.map(h=>({x:new Date(h.t), y:h.p*RATE})),
+        borderColor:css("--accent"), backgroundColor:css("--accent-fill"),
+        borderWidth:2, fill:true, tension:.2,
+        pointRadius:hist.map((_,i)=>i===hist.length-1?4:0),
+        pointBackgroundColor:css("--accent"), pointBorderWidth:0
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,
+        interaction:{mode:"index",intersect:false},
+        plugins:{legend:{display:false},tooltip:{displayColors:false,
+          backgroundColor:css("--board-bg"),
+          callbacks:{label:c=>money(c.parsed.y/RATE)}}},
+        scales:{x:{type:"time",time:{unit:"day"},grid:{color:css("--grid")},
+                   ticks:{color:css("--ink-faint"),font:{size:11},maxTicksLimit:5}},
+                y:{grid:{color:css("--grid")},
+                   ticks:{color:css("--ink-faint"),font:{size:11},
+                          callback:v=>v>=1e6?(v/1e6).toFixed(1)+"M":v>=1000?(v/1000).toFixed(0)+"k":v}}}}
+    });
+  }
+  box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* ── 指定班次 / 新增追蹤：寫回設定 ──────────── */
+const ENDPOINT = (window.XJP_CONFIG||{}).appsScriptUrl || "";
+
+async function send(action, payload, say){
+  if(!ENDPOINT){
+    showRow(payload, say);
+    return;
+  }
+  say.textContent="送出中…";
+  try{
+    await fetch(ENDPOINT, {method:"POST", mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action, ...payload})});
+    say.textContent="已送出到試算表。下一輪抓價（每 3 小時）就會照新設定跑。";
+  }catch(e){
+    say.textContent="送不出去，改用下面這一列自己貼到試算表：";
+    showRow(payload, say);
+  }
+}
+
+const COLS=["watch_id","label","from_airport","to_airport","date_from","date_to","trip",
+            "stay_days","seat","max_stops","pin_airline","pin_depart_time","target_price",
+            "enabled","note"];
+
+function showRow(payload, say){
+  const line = COLS.map(c=>payload[c]??"").join(",");
+  const out=$("#out"); out.classList.add("show");
+  out.querySelector("pre").textContent = COLS.join(",")+"\n"+line;
+  say.textContent="還沒接上試算表，先把下面這一列貼到 watches 分頁（或 config/watches.csv）：";
+  out.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function pinFlight(w,o){
+  const payload = {watch_id:w.id, label:w.label, from_airport:w.from, to_airport:w.to,
+    date_from:w.date_from, date_to:w.date_to, trip:w.trip, stay_days:w.stay_days??"",
+    seat:w.seat, max_stops:"", pin_airline:o.airline, pin_depart_time:o.depart_time,
+    target_price:w.target??"", enabled:"yes", note:`指定班次：${o.airline} ${o.depart_time}`};
+  $("#form").hidden=false;
+  send("upsert", payload, $("#say"));
+}
+
+/* ── 新增追蹤表單 ───────────────────────────── */
+function drawForm(){
+  $("#form").innerHTML = `
+    <h2>新增追蹤</h2>
+    <p>填好按「加入追蹤」。下一輪抓價就會開始掃這個區間的每一天。</p>
+    <div class="fields">
+      <div class="f"><label for="q-id">代號</label><input id="q-id" placeholder="DPS-SIN">
+        <small>自己取，之後歷史靠它對應</small></div>
+      <div class="f"><label for="q-label">名稱</label><input id="q-label" placeholder="峇里島 ⇄ 新加坡"></div>
+      <div class="f"><label for="q-from">出發機場</label><input id="q-from" placeholder="DPS" maxlength="3"></div>
+      <div class="f"><label for="q-to">目的機場</label><input id="q-to" placeholder="SIN" maxlength="3"></div>
+      <div class="f"><label for="q-df">區間起</label><input id="q-df" type="date"></div>
+      <div class="f"><label for="q-dt">區間迄</label><input id="q-dt" type="date"></div>
+      <div class="f"><label for="q-trip">行程</label>
+        <select id="q-trip"><option value="round-trip">來回</option><option value="one-way">單程</option></select></div>
+      <div class="f"><label for="q-stay">停留天數</label><input id="q-stay" type="number" value="14" min="1">
+        <small>來回票才用得到</small></div>
+      <div class="f"><label for="q-seat">艙等</label>
+        <select id="q-seat"><option value="economy">經濟</option><option value="premium-economy">豪華經濟</option>
+          <option value="business">商務</option><option value="first">頭等</option></select></div>
+      <div class="f"><label for="q-stops">最多轉機</label><input id="q-stops" type="number" min="0" placeholder="不限">
+        <small>留空 = 直達轉機都收</small></div>
+      <div class="f"><label for="q-target">目標價</label><input id="q-target" type="number" placeholder="5000000">
+        <small>以 ${DATA.base_currency} 計</small></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="q-go">加入追蹤</button>
+      <button class="btn ghost" id="q-close">取消</button>
+    </div>
+    <p class="say" id="say"></p>
+    <div class="out" id="out"><pre></pre>
+      <div class="actions"><button class="btn ghost" id="q-copy">複製這一列</button></div></div>`;
+
+  $("#q-close").onclick=()=>{ $("#form").hidden=true; };
+  $("#q-copy").onclick=()=>{
+    navigator.clipboard?.writeText($("#out pre").textContent)
+      .then(()=>$("#say").textContent="已複製，貼到試算表 watches 分頁就好。");
+  };
+  $("#q-go").onclick=()=>{
+    const v = id => $("#q-"+id).value.trim();
+    if(!v("id")||!v("from")||!v("to")||!v("df")||!v("dt")){
+      $("#say").textContent="代號、兩個機場、日期區間都要填。"; return;
+    }
+    send("upsert", {
+      watch_id:v("id"), label:v("label")||v("id"),
+      from_airport:v("from").toUpperCase(), to_airport:v("to").toUpperCase(),
+      date_from:v("df"), date_to:v("dt"), trip:v("trip"),
+      stay_days:v("trip")==="round-trip"?v("stay"):"", seat:v("seat"),
+      max_stops:v("stops"), pin_airline:"", pin_depart_time:"",
+      target_price:v("target"), enabled:"yes", note:"從看板新增"
+    }, $("#say"));
+  };
+}
+
+/* ── 啟動 ───────────────────────────────────── */
+function applyCurrency(sel){
+  const o=sel.selectedOptions[0];
+  const base=DATA.fx.find(f=>f.code===DATA.base_currency);
+  RATE = parseFloat(o.dataset.rate) / (base?base.per_idr:1);
+  SYM = (o.textContent.split(" ").pop())||o.value;
+}
+
+function boot(data){
+  DATA=data;
+  ACTIVE = data.watches[0]?.id || null;
+
+  const sel=$("#cur");
+  data.fx.forEach(f=>{ const o=document.createElement("option");
+    o.value=f.code; o.textContent=f.label; o.dataset.rate=f.per_idr; sel.appendChild(o); });
+  let saved=null; try{ saved=localStorage.getItem("xjp-cur"); }catch(e){}
+  sel.value = (saved && data.fx.some(f=>f.code===saved)) ? saved : data.base_currency;
+  applyCurrency(sel);
+  sel.onchange=()=>{ try{localStorage.setItem("xjp-cur",sel.value);}catch(e){}
+    applyCurrency(sel); drawPanel(); };
+
+  $("#stamp").textContent = "最後更新 " +
+    new Date(data.generated_at).toLocaleString("zh-TW",{hour12:false});
+  $("#foot").textContent =
+    `票價以 ${data.base_currency} 抓取並儲存，其他幣別由 config/fx_rates.csv 換算，僅供參考。` +
+    `每 3 小時掃一批，整份清單一天輪完一圈。`;
+
+  drawTabs(); drawPanel(); drawForm();
+}
+
+fetch("data.json?"+Date.now()).then(r=>r.json()).then(boot).catch(()=>{
+  $("#panel").innerHTML='<div class="panel"><div class="empty">讀不到 data.json。第一次抓價跑完、commit 上去之後就會有了。</div></div>';
+  $("#stamp").textContent="尚無資料";
+});
+</script>
+</body>
+</html>

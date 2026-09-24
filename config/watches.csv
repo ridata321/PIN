@@ -1,0 +1,5 @@
+watch_id,label,from_airport,to_airport,date_from,date_to,trip,stay_days,seat,max_stops,pin_airline,pin_depart_time,target_price,enabled,note
+DPS-MEL,峇里島 ⇄ 墨爾本,DPS,MEL,2026-09-24,2027-02-01,round-trip,14,economy,,,,,yes,來回票。停留天數 14 天是暫定的
+SUB-TPE,泗水 ⇄ 台灣桃園,SUB,TPE,2026-09-24,2027-06-30,round-trip,14,economy,,,,,yes,來回票。直達或轉機都收；停留天數 14 天是暫定的
+SUB-KUL,泗水 ⇄ 吉隆坡,SUB,KUL,2026-09-24,2027-02-01,round-trip,7,economy,,,,,yes,來回票。日期區間與停留 7 天都是暫定的，你沒指定過
+SUB-SIN,泗水 ⇄ 新加坡樟宜,SUB,SIN,2026-09-24,2027-02-01,round-trip,7,economy,,,,,yes,來回票。日期區間與停留 7 天都是暫定的，你沒指定過

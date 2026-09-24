@@ -1,0 +1,12 @@
+{
+  "base_currency": "IDR",
+  "language": "en-US",
+  "timezone": "Asia/Jakarta",
+  "history_window_days": 30,
+  "scan_slices": 8,
+  "options_per_date": 6,
+  "min_sleep_seconds": 4,
+  "max_sleep_seconds": 9,
+  "sheet_name": "小機票票價追蹤",
+  "note": "scan_slices=8 表示把所有「航線×出發日」切成 8 份，每 3 小時的那一次只掃其中一份，一天剛好輪完一圈。要每個日期更新得更頻繁就把日期區間縮小，不是把這個數字改小。"
+}
