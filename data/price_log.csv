@@ -20093,3 +20093,63 @@ fetched_at,watch_id,from_airport,to_airport,depart,return_date,seat,price,curren
 2026-11-11 06:54:13+0700,SUB-SIN,SUB,SIN,2027-01-14,2027-01-21,economy,4682991,IDR,Malaysia Airlines,10:00,16:40,1,235,,,google-flights,ok,
 2026-11-11 06:54:13+0700,SUB-SIN,SUB,SIN,2027-01-22,2027-01-29,economy,5422991,IDR,Malaysia Airlines,18:05,00:30,1,230,,,google-flights,ok,
 2026-11-11 06:54:13+0700,SUB-SIN,SUB,SIN,2027-01-30,2027-02-06,economy,5596860,IDR,Lion/Batik Air,06:30,13:45,1,195,,,google-flights,ok,
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2026-11-16,2026-11-30,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2026-11-24,2026-12-08,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2026-12-02,2026-12-16,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2026-12-10,2026-12-24,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2026-12-18,2027-01-01,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2026-12-26,2027-01-09,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2027-01-03,2027-01-17,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2027-01-11,2027-01-25,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2027-01-19,2027-02-02,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,DPS-MEL,DPS,MEL,2027-01-27,2027-02-10,economy,,IDR,,,,,,,,,error,IndexError: list index out of range
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2026-11-14,2026-11-28,economy,5242340,IDR,Scoot,19:30,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2026-11-22,2026-12-06,economy,7843702,IDR,Scoot,09:50,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2026-11-30,2026-12-14,economy,,IDR,,,,,,,,,error,TypeError: 'NoneType' object is not subscriptable
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2026-12-08,2026-12-22,economy,8481310,IDR,Scoot,09:50,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2026-12-16,2026-12-30,economy,7663977,IDR,Scoot,19:30,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2026-12-24,2027-01-07,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-01-01,2027-01-15,economy,5242340,IDR,Scoot,19:30,11:00,1,435,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-01-09,2027-01-23,economy,4800128,IDR,Scoot,19:30,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-01-17,2027-01-31,economy,6244785,IDR,Scoot,19:30,11:00,1,435,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-01-25,2027-02-08,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-02-02,2027-02-16,economy,4018544,IDR,Scoot,19:30,11:00,1,435,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-02-10,2027-02-24,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-02-18,2027-03-04,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-02-26,2027-03-12,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-03-06,2027-03-20,economy,9879933,IDR,Scoot,19:30,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-03-14,2027-03-28,economy,10517541,IDR,Scoot,19:30,05:35,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-03-22,2027-04-05,economy,6442541,IDR,Scoot,09:50,17:00,1,425,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-03-30,2027-04-13,economy,4740784,IDR,Scoot,19:50,17:10,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-04-07,2027-04-21,economy,5329332,IDR,Scoot,19:50,14:15,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-04-15,2027-04-29,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-04-23,2027-05-07,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-05-01,2027-05-15,economy,4547748,IDR,Scoot,19:50,17:10,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-05-09,2027-05-23,economy,8182896,IDR,Scoot,19:50,17:10,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-05-17,2027-05-31,economy,6486037,IDR,Scoot,10:35,05:45,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-05-25,2027-06-08,economy,4578600,IDR,Scoot,19:50,05:45,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-06-02,2027-06-16,economy,4784280,IDR,Scoot,19:50,14:15,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-06-10,2027-06-24,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-06-18,2027-07-02,economy,4887120,IDR,Scoot,19:50,14:15,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-TPE,SUB,TPE,2027-06-26,2027-07-10,economy,4989960,IDR,Scoot,19:50,17:10,1,430,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2026-11-15,2026-11-22,economy,2918287,IDR,Indonesia AirAsia,07:00,10:35,0,155,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2026-11-23,2026-11-30,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2026-12-01,2026-12-08,economy,2590535,IDR,Indonesia AirAsia,16:45,20:25,0,160,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2026-12-09,2026-12-16,economy,2863379,IDR,Indonesia AirAsia,16:45,20:25,0,160,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2026-12-17,2026-12-24,economy,2918287,IDR,Indonesia AirAsia,10:20,13:55,0,155,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2026-12-25,2027-01-01,economy,3344739,IDR,Indonesia AirAsia,04:00,07:35,0,155,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2027-01-02,2027-01-09,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2027-01-10,2027-01-17,economy,3624897,IDR,Indonesia AirAsia,16:45,20:25,0,160,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2027-01-18,2027-01-25,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-KUL,SUB,KUL,2027-01-26,2027-02-02,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-11-13,2026-11-20,economy,5131460,IDR,Lion/Batik Air,07:40,15:15,1,195,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-11-21,2026-11-28,economy,4685195,IDR,Indonesia AirAsia/AirAsia,04:00,10:20,1,230,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-11-29,2026-12-06,economy,4162183,IDR,Singapore Airlines,10:15,13:35,0,140,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-12-07,2026-12-14,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-12-15,2026-12-22,economy,5180557,IDR,Indonesia AirAsia/AirAsia,04:00,10:20,1,230,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-12-23,2026-12-30,economy,5863548,IDR,Indonesia AirAsia/AirAsia,04:00,10:20,1,230,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2026-12-31,2027-01-07,economy,5622991,IDR,Malaysia Airlines,15:50,00:30,1,230,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2027-01-08,2027-01-15,economy,4682991,IDR,Malaysia Airlines,18:05,00:30,1,230,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2027-01-16,2027-01-23,economy,5799581,IDR,Indonesia AirAsia/AirAsia,04:00,10:20,1,230,,,google-flights,ok,
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2027-01-24,2027-01-31,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
+2026-11-11 14:28:59+0700,SUB-SIN,SUB,SIN,2027-02-01,2027-02-08,economy,,IDR,,,,,,,,,error,FlightsNotFound: no flights found; received error
